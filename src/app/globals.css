@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: #0f1b2b;
+  --color-paper: #f7f5ef;
+  --color-surface: #ffffff;
+  --color-emerald: #0e9e86;
+  --color-emerald-dark: #0b7e6a;
+  --color-gold: #f4b740;
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-body), sans-serif;
+}
+
+.redact-bar {
+  background: var(--color-ink);
+  border-radius: 4px;
+  transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.redact-bar.revealed {
+  background: transparent;
+  color: var(--color-ink);
+}
