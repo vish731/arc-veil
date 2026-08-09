@@ -213,3 +213,12 @@ export default function Dashboard() {
         <div className="bg-surface border-2 border-ink rounded-3xl p-8 text-center shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
           <p className="font-mono text-sm text-ink/50">
             Employee
+            <p className="font-mono text-sm text-ink/50">
+            Employee amounts are stored as commitments on-chain. The hover-to-reveal
+            UI connects once amounts are read back from your saved records.
+          </p>
+        </div>
+      </div>
+    </main>
+  );
+}
