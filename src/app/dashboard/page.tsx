@@ -57,7 +57,8 @@ export default function Dashboard() {
     setShowForm(false);
   }
 
-  const contractShort = PAYROLL_ADDRESS.slice(0, 10) + "..." + PAYROLL_ADDRESS.slice(-8);
+  const contractShort =
+    PAYROLL_ADDRESS.slice(0, 10) + "..." + PAYROLL_ADDRESS.slice(-8);
   const explorerUrl = "https://testnet.arcscan.app/address/" + PAYROLL_ADDRESS;
   const txExplorerBase = "https://testnet.arcscan.app/tx/";
 
@@ -74,7 +75,8 @@ export default function Dashboard() {
           <div className="relative">
             {isConnected ? (
               <span className="font-mono text-sm bg-ink text-paper px-4 py-1.5 rounded-full">
-                {address ? address.slice(0, 6) : ""}...{address ? address.slice(-4) : ""}
+                {address ? address.slice(0, 6) : ""}...
+                {address ? address.slice(-4) : ""}
               </span>
             ) : (
               <button
@@ -84,7 +86,10 @@ export default function Dashboard() {
                 Connect Wallet
               </button>
             )}
-            <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
+            <WalletModal
+              open={walletModalOpen}
+              onClose={() => setWalletModalOpen(false)}
+            />
           </div>
         </div>
       </nav>
@@ -98,14 +103,17 @@ export default function Dashboard() {
 
         <div className="grid md:grid-cols-3 gap-6 mb-10">
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
-            <p className="font-mono text-xs text-ink/50 mb-1">Total employees (on-chain)</p>
+            <p className="font-mono text-xs text-ink/50 mb-1">
+              Total employees (on-chain)
+            </p>
             <p className="font-display font-bold text-3xl">
               {employeeCount !== undefined ? Number(employeeCount) : "-"}
             </p>
           </div>
+
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-xs text-ink/50 mb-1">Contract</p>
-            <a
+            
               href={explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -114,9 +122,12 @@ export default function Dashboard() {
               {contractShort}
             </a>
           </div>
+
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-xs text-ink/50 mb-1">Network</p>
-            <p className="font-display font-bold text-3xl text-emerald">Arc Testnet</p>
+            <p className="font-display font-bold text-3xl text-emerald">
+              Arc Testnet
+            </p>
           </div>
         </div>
 
@@ -141,7 +152,9 @@ export default function Dashboard() {
             >
               <div className="bg-surface border-2 border-ink rounded-3xl p-6 grid md:grid-cols-4 gap-4 items-end">
                 <div>
-                  <label className="font-mono text-xs text-ink/50 block mb-1">Name</label>
+                  <label className="font-mono text-xs text-ink/50 block mb-1">
+                    Name
+                  </label>
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -150,7 +163,9 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <label className="font-mono text-xs text-ink/50 block mb-1">Wallet address</label>
+                  <label className="font-mono text-xs text-ink/50 block mb-1">
+                    Wallet address
+                  </label>
                   <input
                     value={walletAddr}
                     onChange={(e) => setWalletAddr(e.target.value)}
@@ -159,7 +174,9 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <label className="font-mono text-xs text-ink/50 block mb-1">Amount (USDC)</label>
+                  <label className="font-mono text-xs text-ink/50 block mb-1">
+                    Amount (USDC)
+                  </label>
                   <input
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
@@ -195,11 +212,4 @@ export default function Dashboard() {
 
         <div className="bg-surface border-2 border-ink rounded-3xl p-8 text-center shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
           <p className="font-mono text-sm text-ink/50">
-            Employee amounts are stored as commitments on-chain. The hover-to-reveal
-            UI connects once amounts are read back from your saved records.
-          </p>
-        </div>
-      </div>
-    </main>
-  );
-}
+            Employee
