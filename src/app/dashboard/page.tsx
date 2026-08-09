@@ -113,7 +113,7 @@ export default function Dashboard() {
 
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-xs text-ink/50 mb-1">Contract</p>
-            
+            <a
               href={explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -199,7 +199,7 @@ export default function Dashboard() {
         {txHash && (
           <div className="bg-emerald/10 border-2 border-emerald/30 rounded-2xl p-4 mb-6 font-mono text-xs break-all">
             {isConfirming ? "Confirming transaction..." : "Confirmed: "}
-            
+            <a
               href={txExplorerBase + txHash}
               target="_blank"
               rel="noopener noreferrer"
