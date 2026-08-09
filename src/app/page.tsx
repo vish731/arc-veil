@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView, animate } from "framer-motion";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useDisconnect } from "wagmi";
 import WalletModal from "./components/WalletModal";
 
 function RedactedAmount({ value, label }: { value: string; label: string }) {
@@ -87,7 +87,7 @@ export default function Home() {
               onClick={() => disconnect()}
               className="bg-emerald text-paper px-5 py-2.5 rounded-full font-medium text-sm border-2 border-emerald hover:bg-emerald-dark transition-colors font-mono"
             >
-              {address?.slice(0, 6)}...{address?.slice(-4)}
+              {address ? address.slice(0, 6) : ""}...{address ? address.slice(-4) : ""}
             </button>
           ) : (
             <button
