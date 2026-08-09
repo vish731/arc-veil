@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useInView, animate } from "framer-motion";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
+import WalletModal from "./components/WalletModal";
 
 function RedactedAmount({ value, label }: { value: string; label: string }) {
   const [revealed, setRevealed] = useState(false);
@@ -65,8 +66,8 @@ function Counter({ from, to, prefix = "", suffix = "" }: { from: number; to: num
 
 export default function Home() {
   const { address, isConnected } = useAccount();
-  const { connectors, connect } = useConnect();
   const { disconnect } = useDisconnect();
+  const [walletModalOpen, setWalletModalOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-paper text-ink overflow-hidden">
@@ -80,21 +81,24 @@ export default function Home() {
           <a href="/dashboard" className="hover:text-emerald transition-colors">Docs</a>
         </div>
 
-        {isConnected ? (
-          <button
-            onClick={() => disconnect()}
-            className="bg-emerald text-paper px-5 py-2.5 rounded-full font-medium text-sm border-2 border-emerald hover:bg-emerald-dark transition-colors font-mono"
-          >
-            {address?.slice(0, 6)}...{address?.slice(-4)}
-          </button>
-        ) : (
-          <button
-            onClick={() => connect({ connector: connectors[0] })}
-            className="bg-ink text-paper px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-transparent hover:text-ink transition-colors"
-          >
-            Connect Wallet
-          </button>
-        )}
+        <div className="relative">
+          {isConnected ? (
+            <button
+              onClick={() => disconnect()}
+              className="bg-emerald text-paper px-5 py-2.5 rounded-full font-medium text-sm border-2 border-emerald hover:bg-emerald-dark transition-colors font-mono"
+            >
+              {address?.slice(0, 6)}...{address?.slice(-4)}
+            </button>
+          ) : (
+            <button
+              onClick={() => setWalletModalOpen(true)}
+              className="bg-ink text-paper px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-transparent hover:text-ink transition-colors"
+            >
+              Connect Wallet
+            </button>
+          )}
+          <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
+        </div>
       </nav>
 
       <section className="relative max-w-7xl mx-auto px-8 pt-16 pb-24 grid md:grid-cols-2 gap-16 items-center">
