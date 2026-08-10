@@ -42,6 +42,17 @@ export const PAYROLL_ABI = [
   },
   {
     type: "function",
+    name: "verifyAmount",
+    inputs: [
+      { name: "id", type: "uint256" },
+      { name: "amount", type: "uint256" },
+      { name: "secret", type: "bytes32" },
+    ],
+    outputs: [{ type: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "owner",
     inputs: [],
     outputs: [{ type: "address" }],
