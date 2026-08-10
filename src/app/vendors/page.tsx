@@ -166,7 +166,7 @@ export default function Vendors() {
         {txHash && (
           <div className="bg-emerald/10 border-2 border-emerald/30 rounded-2xl p-4 mb-6 font-mono text-xs break-all">
             {isConfirming ? "Confirming transaction..." : "Confirmed: "}
-            
+            <a
               href={"https://testnet.arcscan.app/tx/" + txHash}
               target="_blank"
               rel="noopener noreferrer"
