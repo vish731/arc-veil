@@ -75,10 +75,12 @@ export default function Home() {
         <div className="font-display font-bold text-xl tracking-tight">
           arc<span className="text-emerald">-veil</span>
         </div>
-        <div className="hidden md:flex items-center gap-8 font-body text-sm">
-          <a href="#" className="hover:text-emerald transition-colors">Product</a>
-          <a href="#" className="hover:text-emerald transition-colors">How it works</a>
-          <a href="/dashboard" className="hover:text-emerald transition-colors">Docs</a>
+        <div className="hidden md:flex items-center gap-6 font-body text-sm">
+          <a href="/dashboard" className="hover:text-emerald transition-colors">Payroll</a>
+          <a href="/vendors" className="hover:text-emerald transition-colors">Vendors</a>
+          <a href="/analytics" className="hover:text-emerald transition-colors">Analytics</a>
+          <a href="/auditor" className="hover:text-emerald transition-colors">Auditor</a>
+          <a href="/employee" className="hover:text-emerald transition-colors">My records</a>
         </div>
 
         <div className="relative">
@@ -160,13 +162,14 @@ export default function Home() {
             >
               Run your first payroll
             </motion.a>
-            <motion.button
+            <motion.a
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
+              href="/vendors"
               className="px-6 py-3 rounded-full font-medium border-2 border-ink hover:bg-ink hover:text-paper transition-colors"
             >
-              View docs
-            </motion.button>
+              View vendors
+            </motion.a>
           </motion.div>
 
           <motion.div
@@ -243,6 +246,31 @@ export default function Home() {
               <h3 className="font-display font-semibold text-xl mt-3 mb-2">{item.title}</h3>
               <p className="text-ink/60 text-sm leading-relaxed">{item.desc}</p>
             </motion.div>
+          ))}
+        </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-8 py-24 border-t-2 border-ink/10">
+        <h2 className="font-display font-bold text-3xl md:text-4xl mb-12 text-center">
+          Explore the product
+        </h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          {[
+            { href: "/dashboard", title: "Payroll Dashboard", desc: "Add employees, run payroll, and settle instantly in USDC." },
+            { href: "/vendors", title: "Vendor Settlement", desc: "Manage and pay vendor invoices on-chain, confidentially." },
+            { href: "/analytics", title: "Analytics", desc: "Track payroll volume and spend trends over time." },
+            { href: "/auditor", title: "Auditor Access", desc: "Verify specific payroll amounts with a shared secret." },
+            { href: "/employee", title: "Employee View", desc: "Employees see only their own on-chain records." },
+          ].map((item) => (
+            
+              key={item.href}
+              href={item.href}
+              className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)] hover:-translate-y-1 transition-transform block"
+            >
+              <h3 className="font-display font-semibold text-lg mb-2">{item.title}</h3>
+              <p className="text-ink/60 text-sm leading-relaxed">{item.desc}</p>
+              <span className="text-emerald text-sm font-mono mt-4 inline-block">Open &rarr;</span>
+            </a>
           ))}
         </div>
       </section>
