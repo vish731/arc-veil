@@ -5,10 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   useAccount,
   useReadContract,
+  useReadContracts,
   useWriteContract,
   useWaitForTransactionReceipt,
 } from "wagmi";
-import { keccak256, encodePacked, parseUnits } from "viem";
+import { keccak256, encodePacked, parseUnits, formatUnits } from "viem";
 import { PAYROLL_ADDRESS, PAYROLL_ABI } from "../../lib/contract";
 import WalletModal from "../components/WalletModal";
 
@@ -19,11 +20,25 @@ export default function Dashboard() {
   const [name, setName] = useState("");
   const [walletAddr, setWalletAddr] = useState("");
   const [amount, setAmount] = useState("");
+  const [payAmount, setPayAmount] = useState<Record<number, string>>({});
 
   const { data: employeeCount, refetch: refetchCount } = useReadContract({
     address: PAYROLL_ADDRESS,
     abi: PAYROLL_ABI,
     functionName: "employeeCount",
+  });
+
+  const count = employeeCount !== undefined ? Number(employeeCount) : 0;
+
+  const employeeContracts = Array.from({ length: count }, (_, i) => ({
+    address: PAYROLL_ADDRESS,
+    abi: PAYROLL_ABI,
+    functionName: "employees" as const,
+    args: [BigInt(i)] as const,
+  }));
+
+  const { data: employeesData, refetch: refetchEmployees } = useReadContracts({
+    contracts: employeeContracts,
   });
 
   const { writeContract, data: txHash, isPending } = useWriteContract();
@@ -32,8 +47,11 @@ export default function Dashboard() {
   });
 
   useEffect(() => {
-    if (isSuccess) refetchCount();
-  }, [isSuccess, refetchCount]);
+    if (isSuccess) {
+      refetchCount();
+      refetchEmployees();
+    }
+  }, [isSuccess, refetchCount, refetchEmployees]);
 
   function addEmployee() {
     if (!name || !walletAddr || !amount) return;
@@ -57,8 +75,22 @@ export default function Dashboard() {
     setShowForm(false);
   }
 
-  const contractShort =
-    PAYROLL_ADDRESS.slice(0, 10) + "..." + PAYROLL_ADDRESS.slice(-8);
+  function payEmployee(id: number) {
+    const amt = payAmount[id];
+    if (!amt) return;
+
+    const secret = keccak256(encodePacked(["string"], [amt + "-secret-" + id]));
+    const amountWei = parseUnits(amt, 18);
+
+    writeContract({
+      address: PAYROLL_ADDRESS,
+      abi: PAYROLL_ABI,
+      functionName: "payEmployee",
+      args: [BigInt(id), amountWei, secret],
+    });
+  }
+
+  const contractShort = PAYROLL_ADDRESS.slice(0, 10) + "..." + PAYROLL_ADDRESS.slice(-8);
   const explorerUrl = "https://testnet.arcscan.app/address/" + PAYROLL_ADDRESS;
   const txExplorerBase = "https://testnet.arcscan.app/tx/";
 
@@ -75,8 +107,7 @@ export default function Dashboard() {
           <div className="relative">
             {isConnected ? (
               <span className="font-mono text-sm bg-ink text-paper px-4 py-1.5 rounded-full">
-                {address ? address.slice(0, 6) : ""}...
-                {address ? address.slice(-4) : ""}
+                {address ? address.slice(0, 6) : ""}...{address ? address.slice(-4) : ""}
               </span>
             ) : (
               <button
@@ -86,10 +117,7 @@ export default function Dashboard() {
                 Connect Wallet
               </button>
             )}
-            <WalletModal
-              open={walletModalOpen}
-              onClose={() => setWalletModalOpen(false)}
-            />
+            <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
           </div>
         </div>
       </nav>
@@ -103,17 +131,12 @@ export default function Dashboard() {
 
         <div className="grid md:grid-cols-3 gap-6 mb-10">
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
-            <p className="font-mono text-xs text-ink/50 mb-1">
-              Total employees (on-chain)
-            </p>
-            <p className="font-display font-bold text-3xl">
-              {employeeCount !== undefined ? Number(employeeCount) : "-"}
-            </p>
+            <p className="font-mono text-xs text-ink/50 mb-1">Total employees (on-chain)</p>
+            <p className="font-display font-bold text-3xl">{count}</p>
           </div>
-
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-xs text-ink/50 mb-1">Contract</p>
-            <a
+            
               href={explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -122,12 +145,9 @@ export default function Dashboard() {
               {contractShort}
             </a>
           </div>
-
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-xs text-ink/50 mb-1">Network</p>
-            <p className="font-display font-bold text-3xl text-emerald">
-              Arc Testnet
-            </p>
+            <p className="font-display font-bold text-3xl text-emerald">Arc Testnet</p>
           </div>
         </div>
 
@@ -152,9 +172,7 @@ export default function Dashboard() {
             >
               <div className="bg-surface border-2 border-ink rounded-3xl p-6 grid md:grid-cols-4 gap-4 items-end">
                 <div>
-                  <label className="font-mono text-xs text-ink/50 block mb-1">
-                    Name
-                  </label>
+                  <label className="font-mono text-xs text-ink/50 block mb-1">Name</label>
                   <input
                     value={name}
                     onChange={(e) => setName(e.target.value)}
@@ -163,9 +181,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <label className="font-mono text-xs text-ink/50 block mb-1">
-                    Wallet address
-                  </label>
+                  <label className="font-mono text-xs text-ink/50 block mb-1">Wallet address</label>
                   <input
                     value={walletAddr}
                     onChange={(e) => setWalletAddr(e.target.value)}
@@ -174,9 +190,7 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <label className="font-mono text-xs text-ink/50 block mb-1">
-                    Amount (USDC)
-                  </label>
+                  <label className="font-mono text-xs text-ink/50 block mb-1">Amount (USDC)</label>
                   <input
                     value={amount}
                     onChange={(e) => setAmount(e.target.value)}
@@ -199,7 +213,7 @@ export default function Dashboard() {
         {txHash && (
           <div className="bg-emerald/10 border-2 border-emerald/30 rounded-2xl p-4 mb-6 font-mono text-xs break-all">
             {isConfirming ? "Confirming transaction..." : "Confirmed: "}
-            <a
+            
               href={txExplorerBase + txHash}
               target="_blank"
               rel="noopener noreferrer"
@@ -210,12 +224,73 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="bg-surface border-2 border-ink rounded-3xl p-8 text-center shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
-        <p className="font-mono text-sm text-ink/50">
-            Employee amounts are stored as commitments on-chain. The hover-to-reveal
-            UI connects once amounts are read back from your saved records.
-          </p>
-        </div>
+        {count === 0 ? (
+          <div className="bg-surface border-2 border-ink rounded-3xl p-8 text-center shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
+            <p className="font-mono text-sm text-ink/50">
+              No employees on-chain yet. Add your first employee above.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-surface border-2 border-ink rounded-3xl overflow-hidden shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
+            <table className="w-full">
+              <thead>
+                <tr className="border-b-2 border-ink/10 text-left">
+                  <th className="font-mono text-xs text-ink/50 font-normal px-6 py-4">ID</th>
+                  <th className="font-mono text-xs text-ink/50 font-normal px-6 py-4">Wallet</th>
+                  <th className="font-mono text-xs text-ink/50 font-normal px-6 py-4">Status</th>
+                  <th className="font-mono text-xs text-ink/50 font-normal px-6 py-4">Pay (USDC)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {employeesData?.map((emp, i) => {
+                  const result = emp.result as
+                    | readonly [string, `0x${string}`, boolean]
+                    | undefined;
+                  if (!result) return null;
+                  const [wallet, , active] = result;
+                  return (
+                    <tr key={i} className="border-b border-ink/5 last:border-0">
+                      <td className="px-6 py-4 font-mono text-sm">{i}</td>
+                      <td className="px-6 py-4 font-mono text-sm">
+                        {wallet.slice(0, 8)}...{wallet.slice(-6)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={
+                            active
+                              ? "text-xs font-mono px-3 py-1 rounded-full border bg-emerald/10 text-emerald-dark border-emerald/30"
+                              : "text-xs font-mono px-3 py-1 rounded-full border bg-ink/5 text-ink/40 border-ink/10"
+                          }
+                        >
+                          {active ? "active" : "inactive"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex gap-2">
+                          <input
+                            value={payAmount[i] ?? ""}
+                            onChange={(e) =>
+                              setPayAmount({ ...payAmount, [i]: e.target.value })
+                            }
+                            placeholder="amount"
+                            className="w-24 border-2 border-ink/20 rounded-lg px-2 py-1 text-xs focus:border-emerald outline-none font-mono"
+                          />
+                          <button
+                            onClick={() => payEmployee(i)}
+                            disabled={!isConnected || isPending || isConfirming}
+                            className="bg-emerald text-paper px-3 py-1 rounded-lg text-xs font-medium hover:bg-emerald-dark transition-colors disabled:opacity-40"
+                          >
+                            Pay
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </main>
   );
