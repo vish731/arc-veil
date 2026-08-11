@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { useReadContract } from "wagmi";
 import { PAYROLL_ADDRESS, PAYROLL_ABI } from "../../lib/contract";
+import Sidebar from "../components/Sidebar";
 
 const monthlyData = [
   { month: "Jun", amount: 42000 },
@@ -24,22 +25,8 @@ export default function Analytics() {
   const count = employeeCount !== undefined ? Number(employeeCount) : 0;
 
   return (
-    <main className="min-h-screen bg-paper text-ink">
-      <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
-        <a href="/" className="font-display font-bold text-xl tracking-tight">
-          arc<span className="text-emerald">-veil</span>
-        </a>
-        <div className="flex items-center gap-4 font-mono text-sm">
-          <a href="/dashboard" className="text-ink/60 hover:text-emerald transition-colors">
-            Dashboard
-          </a>
-          <span className="bg-emerald/10 text-emerald-dark px-4 py-1.5 rounded-full border border-emerald/30">
-            Analytics
-          </span>
-        </div>
-      </nav>
-
-      <div className="max-w-7xl mx-auto px-8 pb-24">
+    <Sidebar>
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-10">
         <motion.h1
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -82,7 +69,7 @@ export default function Analytics() {
               <div key={d.month} className="flex-1 flex flex-col items-center gap-3">
                 <motion.div
                   initial={{ height: 0 }}
-                  animate={{ height: `${(d.amount / maxAmount) * 100}%` }}
+                  animate={{ height: (d.amount / maxAmount) * 100 + "%" }}
                   transition={{ duration: 0.6, delay: 0.4 + i * 0.1, ease: "easeOut" }}
                   className="w-full bg-emerald rounded-t-xl relative group cursor-pointer hover:bg-emerald-dark transition-colors"
                   style={{ minHeight: "8px" }}
@@ -110,6 +97,6 @@ export default function Analytics() {
           </p>
         </motion.div>
       </div>
-    </main>
+    </Sidebar>
   );
 }
