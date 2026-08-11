@@ -87,7 +87,7 @@ export default function Home() {
 
         <div className="hidden md:flex items-center gap-6 font-body text-sm">
           {navLinks.map((link) => (
-            
+            <a
               key={link.href}
               href={link.href}
               className="hover:text-emerald transition-colors"
