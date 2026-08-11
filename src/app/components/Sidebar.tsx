@@ -23,7 +23,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-paper text-ink md:flex">
-      {/* Mobile top bar */}
       <div className="md:hidden flex items-center justify-between px-6 py-5 border-b-2 border-ink/10">
         <Link href="/" className="font-display font-bold text-xl tracking-tight">
           arc<span className="text-emerald">-veil</span>
@@ -36,7 +35,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         </button>
       </div>
 
-      {/* Mobile dropdown sidebar */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -74,7 +72,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         )}
       </AnimatePresence>
 
-      {/* Desktop sidebar */}
       <aside className="hidden md:flex w-72 shrink-0 border-r-2 border-ink/10 flex-col justify-between min-h-screen sticky top-0">
         <div>
           <div className="px-6 py-6 border-b-2 border-ink/10">
@@ -127,7 +124,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      {/* Mobile wallet button (below top bar) */}
       <div className="md:hidden px-6 py-4 border-b-2 border-ink/10">
         <div className="relative">
           {isConnected ? (
@@ -145,7 +141,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      {/* Page content */}
       <main className="flex-1 min-w-0">{children}</main>
     </div>
   );
