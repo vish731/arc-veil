@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagmi";
 import { keccak256, encodePacked, parseUnits } from "viem";
 import { PAYROLL_ADDRESS, PAYROLL_ABI } from "../../lib/contract";
-import WalletModal from "../components/WalletModal";
+import Sidebar from "../components/Sidebar";
 
 type Invoice = {
   id: number;
@@ -21,8 +21,7 @@ const initialInvoices: Invoice[] = [
 ];
 
 export default function Vendors() {
-  const { address, isConnected } = useAccount();
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
+  const { isConnected } = useAccount();
   const [invoices, setInvoices] = useState(initialInvoices);
   const [showForm, setShowForm] = useState(false);
   const [vendorName, setVendorName] = useState("");
@@ -36,13 +35,7 @@ export default function Vendors() {
     if (!vendorName || !description || !amount) return;
     setInvoices([
       ...invoices,
-      {
-        id: Date.now(),
-        vendor: vendorName,
-        description,
-        amount,
-        status: "pending",
-      },
+      { id: Date.now(), vendor: vendorName, description, amount, status: "pending" },
     ]);
     setVendorName("");
     setDescription("");
@@ -61,41 +54,15 @@ export default function Vendors() {
       args: [BigInt(0), amountWei, secret],
     });
 
-    setInvoices(
-      invoices.map((inv) => (inv.id === id ? { ...inv, status: "paid" } : inv))
-    );
+    setInvoices(invoices.map((inv) => (inv.id === id ? { ...inv, status: "paid" } : inv)));
   }
 
-  return (
-    <main className="min-h-screen bg-paper text-ink">
-      <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
-        <a href="/" className="font-display font-bold text-xl tracking-tight">
-          arc<span className="text-emerald">-veil</span>
-        </a>
-        <div className="flex items-center gap-4 font-mono text-sm">
-          <a href="/dashboard" className="text-ink/60 hover:text-emerald transition-colors">Payroll</a>
-          <a href="/analytics" className="text-ink/60 hover:text-emerald transition-colors">Analytics</a>
-          <a href="/auditor" className="text-ink/60 hover:text-emerald transition-colors">Auditor</a>
-          <div className="relative">
-            {isConnected ? (
-              <span className="bg-ink text-paper px-4 py-1.5 rounded-full">
-                {address ? address.slice(0, 6) : ""}...{address ? address.slice(-4) : ""}
-              </span>
-            ) : (
-              <button
-                onClick={() => setWalletModalOpen(true)}
-                className="bg-ink text-paper px-5 py-2.5 rounded-full font-medium border-2 border-ink hover:bg-transparent hover:text-ink transition-colors"
-              >
-                Connect Wallet
-              </button>
-            )}
-            <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
-          </div>
-        </div>
-      </nav>
+  const txExplorerBase = "https://testnet.arcscan.app/tx/";
 
-      <div className="max-w-7xl mx-auto px-8 pb-24">
-        <div className="flex items-center justify-between mb-8 pt-4">
+  return (
+    <Sidebar>
+      <div className="max-w-5xl mx-auto px-6 md:px-10 py-10">
+        <div className="flex items-center justify-between mb-8">
           <div>
             <span className="font-mono text-xs bg-gold/20 text-ink px-3 py-1 rounded-full border border-gold">
               Vendor settlement
@@ -166,8 +133,8 @@ export default function Vendors() {
         {txHash && (
           <div className="bg-emerald/10 border-2 border-emerald/30 rounded-2xl p-4 mb-6 font-mono text-xs break-all">
             {isConfirming ? "Confirming transaction..." : "Confirmed: "}
-            <a
-              href={"https://testnet.arcscan.app/tx/" + txHash}
+            
+              href={txExplorerBase + txHash}
               target="_blank"
               rel="noopener noreferrer"
               className="text-emerald hover:underline"
@@ -215,6 +182,6 @@ export default function Vendors() {
           ))}
         </div>
       </div>
-    </main>
+    </Sidebar>
   );
 }
