@@ -1,14 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { useAccount, useReadContract, useReadContracts } from "wagmi";
 import { PAYROLL_ADDRESS, PAYROLL_ABI } from "../../lib/contract";
-import WalletModal from "../components/WalletModal";
+import Sidebar from "../components/Sidebar";
 
 export default function EmployeeView() {
   const { address, isConnected } = useAccount();
-  const [walletModalOpen, setWalletModalOpen] = useState(false);
 
   const { data: employeeCount } = useReadContract({
     address: PAYROLL_ADDRESS,
@@ -39,37 +37,8 @@ export default function EmployeeView() {
     .filter((r) => r && address && r.wallet.toLowerCase() === address.toLowerCase());
 
   return (
-    <main className="min-h-screen bg-paper text-ink">
-      <nav className="flex items-center justify-between px-8 py-6 max-w-7xl mx-auto">
-        <a href="/" className="font-display font-bold text-xl tracking-tight">
-          arc<span className="text-emerald">-veil</span>
-        </a>
-        <div className="flex items-center gap-4 font-mono text-sm">
-          <a href="/dashboard" className="text-ink/60 hover:text-emerald transition-colors">
-            HR
-          </a>
-          <a href="/auditor" className="text-ink/60 hover:text-emerald transition-colors">
-            Auditor
-          </a>
-          <div className="relative">
-            {isConnected ? (
-              <span className="bg-ink text-paper px-4 py-1.5 rounded-full">
-                {address ? address.slice(0, 6) : ""}...{address ? address.slice(-4) : ""}
-              </span>
-            ) : (
-              <button
-                onClick={() => setWalletModalOpen(true)}
-                className="bg-ink text-paper px-5 py-2.5 rounded-full font-medium border-2 border-ink hover:bg-transparent hover:text-ink transition-colors"
-              >
-                Connect Wallet
-              </button>
-            )}
-            <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
-          </div>
-        </div>
-      </nav>
-
-      <div className="max-w-2xl mx-auto px-8 pb-24 pt-8">
+    <Sidebar>
+      <div className="max-w-2xl mx-auto px-6 md:px-10 py-10">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
           <span className="font-mono text-xs bg-emerald/10 text-emerald-dark px-3 py-1 rounded-full border border-emerald/30">
             Employee view
@@ -77,7 +46,6 @@ export default function EmployeeView() {
           <h1 className="font-display font-bold text-3xl mt-4 mb-2">My records</h1>
           <p className="text-ink/60 text-sm">
             Connect your wallet to see only your own on-chain payroll records.
-            No one else&apos;s data is visible from here.
           </p>
         </motion.div>
 
@@ -129,6 +97,6 @@ export default function EmployeeView() {
           </>
         )}
       </div>
-    </main>
+    </Sidebar>
   );
 }
