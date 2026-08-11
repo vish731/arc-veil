@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { motion, useInView, animate } from "framer-motion";
+import { motion, useInView, animate, AnimatePresence } from "framer-motion";
 import { useAccount, useDisconnect } from "wagmi";
 import WalletModal from "./components/WalletModal";
 
@@ -64,10 +64,19 @@ function Counter({ from, to, prefix = "", suffix = "" }: { from: number; to: num
   );
 }
 
+const navLinks = [
+  { href: "/dashboard", label: "Payroll" },
+  { href: "/vendors", label: "Vendors" },
+  { href: "/analytics", label: "Analytics" },
+  { href: "/auditor", label: "Auditor" },
+  { href: "/employee", label: "My records" },
+];
+
 export default function Home() {
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const [walletModalOpen, setWalletModalOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <main className="min-h-screen bg-paper text-ink overflow-hidden">
@@ -75,33 +84,71 @@ export default function Home() {
         <div className="font-display font-bold text-xl tracking-tight">
           arc<span className="text-emerald">-veil</span>
         </div>
+
         <div className="hidden md:flex items-center gap-6 font-body text-sm">
-          <a href="/dashboard" className="hover:text-emerald transition-colors">Payroll</a>
-          <a href="/vendors" className="hover:text-emerald transition-colors">Vendors</a>
-          <a href="/analytics" className="hover:text-emerald transition-colors">Analytics</a>
-          <a href="/auditor" className="hover:text-emerald transition-colors">Auditor</a>
-          <a href="/employee" className="hover:text-emerald transition-colors">My records</a>
+          {navLinks.map((link) => (
+            
+              key={link.href}
+              href={link.href}
+              className="hover:text-emerald transition-colors"
+            >
+              {link.label}
+            </a>
+          ))}
         </div>
 
-        <div className="relative">
-          {isConnected ? (
-            <button
-              onClick={() => disconnect()}
-              className="bg-emerald text-paper px-5 py-2.5 rounded-full font-medium text-sm border-2 border-emerald hover:bg-emerald-dark transition-colors font-mono"
-            >
-              {address ? address.slice(0, 6) : ""}...{address ? address.slice(-4) : ""}
-            </button>
-          ) : (
-            <button
-              onClick={() => setWalletModalOpen(true)}
-              className="bg-ink text-paper px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-transparent hover:text-ink transition-colors"
-            >
-              Connect Wallet
-            </button>
-          )}
-          <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            {isConnected ? (
+              <button
+                onClick={() => disconnect()}
+                className="bg-emerald text-paper px-4 md:px-5 py-2 md:py-2.5 rounded-full font-medium text-xs md:text-sm border-2 border-emerald hover:bg-emerald-dark transition-colors font-mono"
+              >
+                {address ? address.slice(0, 6) : ""}...{address ? address.slice(-4) : ""}
+              </button>
+            ) : (
+              <button
+                onClick={() => setWalletModalOpen(true)}
+                className="bg-ink text-paper px-4 md:px-5 py-2 md:py-2.5 rounded-full font-medium text-xs md:text-sm border-2 border-ink hover:bg-transparent hover:text-ink transition-colors"
+              >
+                Connect
+              </button>
+            )}
+            <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
+          </div>
+
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden w-9 h-9 flex items-center justify-center border-2 border-ink rounded-full"
+            aria-label="Menu"
+          >
+            <span className="text-sm">{mobileMenuOpen ? "✕" : "☰"}</span>
+          </button>
         </div>
       </nav>
+
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden overflow-hidden border-b-2 border-ink/10 relative z-10 max-w-7xl mx-auto"
+          >
+            <div className="px-8 py-4 flex flex-col gap-2">
+              {navLinks.map((link) => (
+                
+                  key={link.href}
+                  href={link.href}
+                  className="rounded-2xl p-3 bg-surface border-2 border-ink/10 font-mono text-sm hover:border-emerald transition-colors"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <section className="relative max-w-7xl mx-auto px-8 pt-16 pb-24 grid md:grid-cols-2 gap-16 items-center">
         <div className="relative z-10">
@@ -262,7 +309,7 @@ export default function Home() {
             { href: "/auditor", title: "Auditor Access", desc: "Verify specific payroll amounts with a shared secret." },
             { href: "/employee", title: "Employee View", desc: "Employees see only their own on-chain records." },
           ].map((item) => (
-            <a
+            
               key={item.href}
               href={item.href}
               className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)] hover:-translate-y-1 transition-transform block"
