@@ -262,7 +262,7 @@ export default function Home() {
             { href: "/auditor", title: "Auditor Access", desc: "Verify specific payroll amounts with a shared secret." },
             { href: "/employee", title: "Employee View", desc: "Employees see only their own on-chain records." },
           ].map((item) => (
-            
+            <a
               key={item.href}
               href={item.href}
               className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)] hover:-translate-y-1 transition-transform block"
