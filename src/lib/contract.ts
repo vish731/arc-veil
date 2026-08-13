@@ -53,6 +53,27 @@ export const PAYROLL_ABI = [
   },
   {
     type: "function",
+    name: "grantAuditor",
+    inputs: [{ name: "auditor", type: "address" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "revokeAuditor",
+    inputs: [{ name: "auditor", type: "address" }],
+    outputs: [],
+    stateMutability: "nonpayable",
+  },
+  {
+    type: "function",
+    name: "auditors",
+    inputs: [{ name: "", type: "address" }],
+    outputs: [{ type: "bool" }],
+    stateMutability: "view",
+  },
+  {
+    type: "function",
     name: "owner",
     inputs: [],
     outputs: [{ type: "address" }],
