@@ -12,14 +12,17 @@ import {
 import { keccak256, encodePacked, parseUnits } from "viem";
 import { PAYROLL_ADDRESS, PAYROLL_ABI } from "../../lib/contract";
 import Sidebar from "../components/Sidebar";
+import { useToast } from "../components/Toast";
 
 export default function Dashboard() {
   const { isConnected } = useAccount();
+  const { showToast } = useToast();
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState("");
   const [walletAddr, setWalletAddr] = useState("");
   const [amount, setAmount] = useState("");
   const [payAmount, setPayAmount] = useState<Record<number, string>>({});
+  const [lastAction, setLastAction] = useState<"add" | "pay" | null>(null);
 
   const { data: employeeCount, refetch: refetchCount } = useReadContract({
     address: PAYROLL_ADDRESS,
@@ -40,7 +43,7 @@ export default function Dashboard() {
     contracts: employeeContracts,
   });
 
-  const { writeContract, data: txHash, isPending } = useWriteContract();
+  const { writeContract, data: txHash, isPending, error: writeError } = useWriteContract();
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
     hash: txHash,
   });
@@ -49,11 +52,26 @@ export default function Dashboard() {
     if (isSuccess) {
       refetchCount();
       refetchEmployees();
+      if (lastAction === "add") {
+        showToast("Employee added on-chain successfully!", "success");
+      } else if (lastAction === "pay") {
+        showToast("Payment confirmed on Arc testnet!", "success");
+      }
+      setLastAction(null);
     }
-  }, [isSuccess, refetchCount, refetchEmployees]);
+  }, [isSuccess, refetchCount, refetchEmployees, lastAction, showToast]);
+
+  useEffect(() => {
+    if (writeError) {
+      showToast("Transaction failed. Please try again.", "error");
+    }
+  }, [writeError, showToast]);
 
   function addEmployee() {
-    if (!name || !walletAddr || !amount) return;
+    if (!name || !walletAddr || !amount) {
+      showToast("Please fill in all fields.", "error");
+      return;
+    }
 
     const secret = keccak256(encodePacked(["string"], [name]));
     const amountWei = parseUnits(amount, 18);
@@ -61,6 +79,7 @@ export default function Dashboard() {
       encodePacked(["uint256", "bytes32"], [amountWei, secret])
     );
 
+    setLastAction("add");
     writeContract({
       address: PAYROLL_ADDRESS,
       abi: PAYROLL_ABI,
@@ -76,11 +95,15 @@ export default function Dashboard() {
 
   function payEmployee(id: number) {
     const amt = payAmount[id];
-    if (!amt) return;
+    if (!amt) {
+      showToast("Enter an amount first.", "error");
+      return;
+    }
 
     const secret = keccak256(encodePacked(["string"], [amt + "-secret-" + id]));
     const amountWei = parseUnits(amt, 18);
 
+    setLastAction("pay");
     writeContract({
       address: PAYROLL_ADDRESS,
       abi: PAYROLL_ABI,
