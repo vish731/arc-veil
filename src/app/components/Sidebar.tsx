@@ -13,6 +13,7 @@ const links = [
   { href: "/analytics", label: "Analytics" },
   { href: "/auditor", label: "Auditor" },
   { href: "/employee", label: "My records" },
+  { href: "/settings", label: "Settings" },
 ];
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
@@ -28,7 +29,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           arc<span className="text-emerald">-veil</span>
         </Link>
 
-        {/* Desktop: plain horizontal links, always visible */}
         <div className="hidden md:flex items-center gap-1 font-mono text-sm">
           {links.map((link) => (
             <Link
@@ -63,7 +63,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             <WalletModal open={walletModalOpen} onClose={() => setWalletModalOpen(false)} />
           </div>
 
-          {/* Mobile only: hamburger icon */}
           <button
             onClick={() => setMenuOpen(!menuOpen)}
             className="md:hidden w-9 h-9 flex items-center justify-center border-2 border-ink rounded-full"
@@ -74,7 +73,6 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      {/* Mobile only: dropdown menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
