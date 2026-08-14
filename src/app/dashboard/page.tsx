@@ -23,6 +23,8 @@ export default function Dashboard() {
   const [amount, setAmount] = useState("");
   const [payAmount, setPayAmount] = useState<Record<number, string>>({});
   const [lastAction, setLastAction] = useState<"add" | "pay" | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
 
   const { data: employeeCount, refetch: refetchCount } = useReadContract({
     address: PAYROLL_ADDRESS,
@@ -117,6 +119,21 @@ export default function Dashboard() {
   const explorerUrl = "https://testnet.arcscan.app/address/" + PAYROLL_ADDRESS;
   const txExplorerBase = "https://testnet.arcscan.app/tx/";
 
+  const filteredEmployees = employeesData
+    ?.map((emp, i) => {
+      const result = emp.result as readonly [string, `0x${string}`, boolean] | undefined;
+      if (!result) return null;
+      const [wallet, , active] = result;
+      return { id: i, wallet, active };
+    })
+    .filter((e) => e !== null)
+    .filter((e) => e!.wallet.toLowerCase().includes(searchQuery.toLowerCase()))
+    .filter((e) => {
+      if (statusFilter === "all") return true;
+      if (statusFilter === "active") return e!.active;
+      return !e!.active;
+    });
+
   return (
     <Sidebar>
       <div className="max-w-5xl mx-auto px-6 md:px-10 py-10">
@@ -133,7 +150,7 @@ export default function Dashboard() {
           </div>
           <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-xs text-ink/50 mb-1">Contract</p>
-            <a
+            
               href={explorerUrl}
               target="_blank"
               rel="noopener noreferrer"
@@ -221,10 +238,43 @@ export default function Dashboard() {
           </div>
         )}
 
+        {count > 0 && (
+          <div className="flex flex-col md:flex-row gap-3 mb-4">
+            <input
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search by wallet address..."
+              className="flex-1 border-2 border-ink/20 rounded-xl px-4 py-2.5 text-sm focus:border-emerald outline-none font-mono"
+            />
+            <div className="flex gap-2">
+              {(["all", "active", "inactive"] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setStatusFilter(f)}
+                  className={
+                    "px-4 py-2 rounded-xl text-xs font-mono border-2 transition-colors capitalize " +
+                    (statusFilter === f
+                      ? "bg-ink text-paper border-ink"
+                      : "border-ink/20 text-ink/60 hover:border-emerald")
+                  }
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {count === 0 ? (
           <div className="bg-surface border-2 border-ink rounded-3xl p-8 text-center shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-sm text-ink/50">
               No employees on-chain yet. Add your first employee above.
+            </p>
+          </div>
+        ) : filteredEmployees && filteredEmployees.length === 0 ? (
+          <div className="bg-surface border-2 border-ink rounded-3xl p-8 text-center shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
+            <p className="font-mono text-sm text-ink/50">
+              No employees match your search or filter.
             </p>
           </div>
         ) : (
@@ -239,51 +289,44 @@ export default function Dashboard() {
                 </tr>
               </thead>
               <tbody>
-                {employeesData?.map((emp, i) => {
-                  const result = emp.result as
-                    | readonly [string, `0x${string}`, boolean]
-                    | undefined;
-                  if (!result) return null;
-                  const [wallet, , active] = result;
-                  return (
-                    <tr key={i} className="border-b border-ink/5 last:border-0">
-                      <td className="px-6 py-4 font-mono text-sm">{i}</td>
-                      <td className="px-6 py-4 font-mono text-sm">
-                        {wallet.slice(0, 8)}...{wallet.slice(-6)}
-                      </td>
-                      <td className="px-6 py-4">
-                        <span
-                          className={
-                            active
-                              ? "text-xs font-mono px-3 py-1 rounded-full border bg-emerald/10 text-emerald-dark border-emerald/30"
-                              : "text-xs font-mono px-3 py-1 rounded-full border bg-ink/5 text-ink/40 border-ink/10"
+                {filteredEmployees?.map((e) => (
+                  <tr key={e!.id} className="border-b border-ink/5 last:border-0">
+                    <td className="px-6 py-4 font-mono text-sm">{e!.id}</td>
+                    <td className="px-6 py-4 font-mono text-sm">
+                      {e!.wallet.slice(0, 8)}...{e!.wallet.slice(-6)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <span
+                        className={
+                          e!.active
+                            ? "text-xs font-mono px-3 py-1 rounded-full border bg-emerald/10 text-emerald-dark border-emerald/30"
+                            : "text-xs font-mono px-3 py-1 rounded-full border bg-ink/5 text-ink/40 border-ink/10"
+                        }
+                      >
+                        {e!.active ? "active" : "inactive"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <input
+                          value={payAmount[e!.id] ?? ""}
+                          onChange={(ev) =>
+                            setPayAmount({ ...payAmount, [e!.id]: ev.target.value })
                           }
+                          placeholder="amount"
+                          className="w-24 border-2 border-ink/20 rounded-lg px-2 py-1 text-xs focus:border-emerald outline-none font-mono"
+                        />
+                        <button
+                          onClick={() => payEmployee(e!.id)}
+                          disabled={!isConnected || isPending || isConfirming}
+                          className="bg-emerald text-paper px-3 py-1 rounded-lg text-xs font-medium hover:bg-emerald-dark transition-colors disabled:opacity-40"
                         >
-                          {active ? "active" : "inactive"}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex gap-2">
-                          <input
-                            value={payAmount[i] ?? ""}
-                            onChange={(e) =>
-                              setPayAmount({ ...payAmount, [i]: e.target.value })
-                            }
-                            placeholder="amount"
-                            className="w-24 border-2 border-ink/20 rounded-lg px-2 py-1 text-xs focus:border-emerald outline-none font-mono"
-                          />
-                          <button
-                            onClick={() => payEmployee(i)}
-                            disabled={!isConnected || isPending || isConfirming}
-                            className="bg-emerald text-paper px-3 py-1 rounded-lg text-xs font-medium hover:bg-emerald-dark transition-colors disabled:opacity-40"
-                          >
-                            Pay
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  );
-                })}
+                          Pay
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
