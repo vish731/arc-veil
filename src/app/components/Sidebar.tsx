@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import WalletModal from "./WalletModal";
+import ThemeToggle from "./ThemeToggle";
 
 const links = [
   { href: "/dashboard", label: "Payroll" },
@@ -47,6 +48,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex items-center gap-3">
+          <ThemeToggle />
           <div className="relative">
             {isConnected ? (
               <div className="bg-ink text-paper rounded-full px-4 py-2 font-mono text-xs">
