@@ -30,7 +30,7 @@ export default function Error({
           >
             Try again
           </button>
-          
+          <a
             href="/"
             className="border-2 border-ink px-6 py-3 rounded-full font-medium text-sm hover:bg-ink hover:text-paper transition-colors"
           >
