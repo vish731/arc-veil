@@ -15,6 +15,7 @@ const links = [
   { href: "/auditor", label: "Auditor" },
   { href: "/employee", label: "My records" },
   { href: "/settings", label: "Settings" },
+  { href: "/help", label: "Help" },
 ];
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
