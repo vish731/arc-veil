@@ -80,7 +80,7 @@ export default function Help() {
           <p className="text-paper/70 text-sm mb-4">
             Check out the contract directly on Arc&apos;s block explorer.
           </p>
-          
+          <a
             href="https://testnet.arcscan.app/address/0xDecf2FE5cF876C2D5d046F15484cA05d87A6FF05"
             target="_blank"
             rel="noopener noreferrer"
