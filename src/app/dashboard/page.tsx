@@ -13,6 +13,7 @@ import { keccak256, encodePacked, parseUnits } from "viem";
 import { PAYROLL_ADDRESS, PAYROLL_ABI } from "../../lib/contract";
 import Sidebar from "../components/Sidebar";
 import { useToast } from "../components/Toast";
+import { TableSkeleton, CardSkeleton } from "../components/Skeleton";
 
 export default function Dashboard() {
   const { isConnected } = useAccount();
@@ -134,6 +135,8 @@ export default function Dashboard() {
       return !e!.active;
     });
 
+  const isLoading = employeeCount === undefined;
+
   return (
     <Sidebar>
       <div className="max-w-5xl mx-auto px-6 md:px-10 py-10">
@@ -143,27 +146,35 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
-          <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
-            <p className="font-mono text-xs text-ink/50 mb-1">Total employees (on-chain)</p>
-            <p className="font-display font-bold text-3xl">{count}</p>
+        {isLoading ? (
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
           </div>
-          <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
-            <p className="font-mono text-xs text-ink/50 mb-1">Contract</p>
-            <a
-              href={explorerUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-mono text-xs text-emerald hover:underline break-all"
-            >
-              {contractShort}
-            </a>
+        ) : (
+          <div className="grid md:grid-cols-3 gap-6 mb-10">
+            <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
+              <p className="font-mono text-xs text-ink/50 mb-1">Total employees (on-chain)</p>
+              <p className="font-display font-bold text-3xl">{count}</p>
+            </div>
+            <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
+              <p className="font-mono text-xs text-ink/50 mb-1">Contract</p>
+              
+                href={explorerUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-mono text-xs text-emerald hover:underline break-all"
+              >
+                {contractShort}
+              </a>
+            </div>
+            <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
+              <p className="font-mono text-xs text-ink/50 mb-1">Network</p>
+              <p className="font-display font-bold text-3xl text-emerald">Arc Testnet</p>
+            </div>
           </div>
-          <div className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]">
-            <p className="font-mono text-xs text-ink/50 mb-1">Network</p>
-            <p className="font-display font-bold text-3xl text-emerald">Arc Testnet</p>
-          </div>
-        </div>
+        )}
 
         <div className="flex items-center justify-between mb-6">
           <h1 className="font-display font-bold text-2xl">On-chain Employees</h1>
@@ -238,7 +249,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {count > 0 && (
+        {count > 0 && !isLoading && (
           <div className="flex flex-col md:flex-row gap-3 mb-4">
             <input
               value={searchQuery}
@@ -265,7 +276,9 @@ export default function Dashboard() {
           </div>
         )}
 
-        {count === 0 ? (
+        {isLoading ? (
+          <TableSkeleton />
+        ) : count === 0 ? (
           <div className="bg-surface border-2 border-ink rounded-3xl p-8 text-center shadow-[6px_6px_0px_0px_rgba(15,27,43,1)]">
             <p className="font-mono text-sm text-ink/50">
               No employees on-chain yet. Add your first employee above.
@@ -330,8 +343,3 @@ export default function Dashboard() {
               </tbody>
             </table>
           </div>
-        )}
-      </div>
-    </Sidebar>
-  );
-}
