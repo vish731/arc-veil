@@ -176,16 +176,18 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="flex items-center justify-between mb-6">
-          <h1 className="font-display font-bold text-2xl">On-chain Employees</h1>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            disabled={!isConnected}
-            className="px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            + Add employee
-          </button>
-        </div>
+       <div className="flex items-center justify-between mb-6">
+  <h1 className="font-display font-bold text-2xl">On-chain Employees</h1>
+  <div className="flex gap-3">
+    <button
+      onClick={() => setShowForm(!showForm)}
+      disabled={!isConnected}
+      className="px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-ink hover:text-paper transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+    >
+      + Add employee
+    </button>
+  </div>
+</div>
 
         <AnimatePresence>
           {showForm && (
