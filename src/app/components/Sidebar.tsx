@@ -9,6 +9,7 @@ import WalletModal from "./WalletModal";
 import ThemeToggle from "./ThemeToggle";
 
 const links = [
+  { href: "/", label: "Home" },
   { href: "/dashboard", label: "Payroll" },
   { href: "/vendors", label: "Vendors" },
   { href: "/analytics", label: "Analytics" },
@@ -30,6 +31,7 @@ const links = [
   { href: "/changelog", label: "Changelog" },
   { href: "/help", label: "Help" },
 ];
+
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
@@ -49,13 +51,13 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
           </span>
         </div>
 
-        <div className="hidden md:flex items-center gap-1 font-mono text-sm">
+        <div className="hidden md:flex items-center gap-1 font-mono text-sm overflow-x-auto max-w-2xl">
           {links.map((link) => (
             <Link
               key={link.href}
               href={link.href}
               className={
-                "px-3 py-2 rounded-full transition-colors " +
+                "px-3 py-2 rounded-full transition-colors whitespace-nowrap " +
                 (pathname === link.href
                   ? "bg-ink text-paper"
                   : "text-ink/60 hover:text-emerald")
@@ -102,7 +104,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             exit={{ opacity: 0, height: 0 }}
             className="md:hidden overflow-hidden border-b-2 border-ink/10"
           >
-            <div className="px-4 py-4 flex flex-col gap-2">
+            <div className="px-4 py-4 flex flex-col gap-2 max-h-96 overflow-y-auto">
               {links.map((link) => (
                 <Link
                   key={link.href}
