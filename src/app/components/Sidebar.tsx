@@ -18,6 +18,7 @@ const links = [
   { href: "/employee", label: "My records" },
   { href: "/compliance", label: "Compliance" },
   { href: "/integrations", label: "Integrations" },
+  { href: "/contracts", label: "Contracts" },
   { href: "/api-keys", label: "API keys" },
   { href: "/notifications", label: "Notifications" },
   { href: "/billing", label: "Billing" },
@@ -25,6 +26,8 @@ const links = [
   { href: "/settings", label: "Settings" },
   { href: "/roadmap", label: "Roadmap" },
   { href: "/team", label: "Team" },
+  { href: "/support", label: "Support" },
+  { href: "/changelog", label: "Changelog" },
   { href: "/help", label: "Help" },
 ];
 export default function Sidebar({ children }: { children: React.ReactNode }) {
