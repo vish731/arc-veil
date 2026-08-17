@@ -15,6 +15,7 @@ const links = [
   { href: "/auditor", label: "Auditor" },
   { href: "/activity", label: "Activity" },
   { href: "/employee", label: "My records" },
+  { href: "/profile", label: "Profile" },
   { href: "/settings", label: "Settings" },
   { href: "/help", label: "Help" },
 ];
@@ -28,9 +29,15 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-paper text-ink">
       <div className="flex items-center justify-between px-6 md:px-8 py-5 border-b-2 border-ink/10">
-        <Link href="/" className="font-display font-bold text-xl tracking-tight">
-          arc<span className="text-emerald">-veil</span>
-        </Link>
+        <div className="flex items-center gap-4">
+          <Link href="/" className="font-display font-bold text-xl tracking-tight">
+            arc<span className="text-emerald">-veil</span>
+          </Link>
+          <span className="hidden md:inline-flex items-center gap-1.5 font-mono text-xs text-ink/50">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald animate-pulse" />
+            Arc Testnet
+          </span>
+        </div>
 
         <div className="hidden md:flex items-center gap-1 font-mono text-sm">
           {links.map((link) => (
@@ -38,7 +45,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               key={link.href}
               href={link.href}
               className={
-                "px-4 py-2 rounded-full transition-colors " +
+                "px-3 py-2 rounded-full transition-colors " +
                 (pathname === link.href
                   ? "bg-ink text-paper"
                   : "text-ink/60 hover:text-emerald")
