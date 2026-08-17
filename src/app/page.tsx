@@ -140,7 +140,7 @@ export default function Home() {
           >
             <div className="px-8 py-4 flex flex-col gap-2">
               {navLinks.map((link) => (
-                
+                <a
                   key={link.href}
                   href={link.href}
                   className="rounded-2xl p-3 bg-surface border-2 border-ink/10 font-mono text-sm hover:border-emerald transition-colors"
