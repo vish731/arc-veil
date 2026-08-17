@@ -17,9 +17,10 @@ const links = [
   { href: "/employee", label: "My records" },
   { href: "/profile", label: "Profile" },
   { href: "/settings", label: "Settings" },
+  { href: "/roadmap", label: "Roadmap" },
+  { href: "/team", label: "Team" },
   { href: "/help", label: "Help" },
 ];
-
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
