@@ -6,6 +6,7 @@ import { useAccount, useWriteContract, useWaitForTransactionReceipt } from "wagm
 import { keccak256, encodePacked, parseUnits } from "viem";
 import { PAYROLL_ADDRESS, PAYROLL_ABI } from "../../lib/contract";
 import Sidebar from "../components/Sidebar";
+import { useToast } from "../components/Toast";
 
 type Invoice = {
   id: number;
@@ -22,6 +23,7 @@ const initialInvoices: Invoice[] = [
 
 export default function Vendors() {
   const { isConnected } = useAccount();
+  const { showToast } = useToast();
   const [invoices, setInvoices] = useState(initialInvoices);
   const [showForm, setShowForm] = useState(false);
   const [vendorName, setVendorName] = useState("");
@@ -32,7 +34,10 @@ export default function Vendors() {
   const { isLoading: isConfirming } = useWaitForTransactionReceipt({ hash: txHash });
 
   function addInvoice() {
-    if (!vendorName || !description || !amount) return;
+    if (!vendorName || !description || !amount) {
+      showToast("Please fill in all fields.", "error");
+      return;
+    }
     setInvoices([
       ...invoices,
       { id: Date.now(), vendor: vendorName, description, amount, status: "pending" },
@@ -41,6 +46,7 @@ export default function Vendors() {
     setDescription("");
     setAmount("");
     setShowForm(false);
+    showToast("Invoice added.", "success");
   }
 
   function payInvoice(id: number, invoiceAmount: string) {
@@ -57,24 +63,47 @@ export default function Vendors() {
     setInvoices(invoices.map((inv) => (inv.id === id ? { ...inv, status: "paid" } : inv)));
   }
 
+  function exportCSV() {
+    const rows = [["Vendor", "Description", "Amount", "Status"]];
+    invoices.forEach((inv) => {
+      rows.push([inv.vendor, inv.description, inv.amount, inv.status]);
+    });
+    const csvContent = rows.map((r) => r.map((c) => `"${c}"`).join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "arc-veil-vendor-invoices.csv";
+    link.click();
+    URL.revokeObjectURL(url);
+  }
+
   const txExplorerBase = "https://testnet.arcscan.app/tx/";
 
   return (
     <Sidebar>
       <div className="max-w-5xl mx-auto px-6 md:px-10 py-10">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
           <div>
             <span className="font-mono text-xs bg-gold/20 text-ink px-3 py-1 rounded-full border border-gold">
               Vendor settlement
             </span>
             <h1 className="font-display font-bold text-3xl mt-3">Vendor invoices</h1>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            className="px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-ink hover:text-paper transition-colors"
-          >
-            + New invoice
-          </button>
+          <div className="flex gap-3">
+            <button
+              onClick={exportCSV}
+              className="px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-ink hover:text-paper transition-colors"
+            >
+              Export CSV
+            </button>
+            <button
+              onClick={() => setShowForm(!showForm)}
+              className="px-5 py-2.5 rounded-full font-medium text-sm border-2 border-ink hover:bg-ink hover:text-paper transition-colors"
+            >
+              + New invoice
+            </button>
+          </div>
         </div>
 
         {!isConnected && (
@@ -133,7 +162,7 @@ export default function Vendors() {
         {txHash && (
           <div className="bg-emerald/10 border-2 border-emerald/30 rounded-2xl p-4 mb-6 font-mono text-xs break-all">
             {isConfirming ? "Confirming transaction..." : "Confirmed: "}
-            <a
+            
               href={txExplorerBase + txHash}
               target="_blank"
               rel="noopener noreferrer"
