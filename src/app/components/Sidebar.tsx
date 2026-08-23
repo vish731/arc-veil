@@ -7,6 +7,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import WalletModal from "./WalletModal";
 import ThemeToggle from "./ThemeToggle";
+import GlobalSearch from "./GlobalSearch";
 
 const links = [
   { href: "/", label: "Home" },
@@ -70,6 +71,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
         </div>
 
         <div className="flex items-center gap-3">
+          <GlobalSearch />
           <ThemeToggle />
           <div className="relative">
             {isConnected ? (
