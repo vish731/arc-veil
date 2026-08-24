@@ -11,6 +11,7 @@ import GlobalSearch from "./GlobalSearch";
 
 const links = [
   { href: "/", label: "Home" },
+  { href: "/onboarding", label: "Getting started" },
   { href: "/dashboard", label: "Payroll" },
   { href: "/vendors", label: "Vendors" },
   { href: "/analytics", label: "Analytics" },
@@ -31,6 +32,7 @@ const links = [
   { href: "/team", label: "Team" },
   { href: "/support", label: "Support" },
   { href: "/changelog", label: "Changelog" },
+  { href: "/shortcuts", label: "Shortcuts" },
   { href: "/help", label: "Help" },
 ];
 
