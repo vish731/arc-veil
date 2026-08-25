@@ -23,6 +23,8 @@ const links = [
   { href: "/integrations", label: "Integrations" },
   { href: "/contracts", label: "Contracts" },
   { href: "/api-keys", label: "API keys" },
+  { href: "/webhooks", label: "Webhooks" },
+  { href: "/export-data", label: "Export data" },
   { href: "/notifications", label: "Notifications" },
   { href: "/billing", label: "Billing" },
   { href: "/profile", label: "Profile" },
@@ -35,7 +37,6 @@ const links = [
   { href: "/shortcuts", label: "Shortcuts" },
   { href: "/help", label: "Help" },
 ];
-
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
