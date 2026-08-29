@@ -39,6 +39,7 @@ const links = [
   { href: "/shortcuts", label: "Shortcuts" },
   { href: "/help", label: "Help" },
 ];
+
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const { address, isConnected } = useAccount();
