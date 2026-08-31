@@ -66,6 +66,7 @@ function Counter({ from, to, prefix = "", suffix = "" }: { from: number; to: num
 }
 
 const navLinks = [
+  { href: "/", label: "Home" },
   { href: "/dashboard", label: "Payroll" },
   { href: "/vendors", label: "Vendors" },
   { href: "/analytics", label: "Analytics" },
