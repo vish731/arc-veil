@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function ThemeToggle() {
   const [dark, setDark] = useState(false);
@@ -23,24 +23,27 @@ export default function ThemeToggle() {
   }
 
   if (!mounted) {
-    return <div className="w-9 h-9" />;
+    return <div className="w-10 h-10" />;
   }
 
   return (
     <button
       onClick={toggle}
       aria-label="Toggle theme"
-      className="w-9 h-9 rounded-full border-2 border-ink bg-surface flex items-center justify-center hover:bg-ink hover:text-paper transition-colors shrink-0"
+      className="w-10 h-10 rounded-xl bg-emerald/15 border-2 border-emerald/30 flex items-center justify-center hover:bg-emerald/25 transition-colors shrink-0"
     >
-      <motion.span
-        key={dark ? "moon" : "sun"}
-        initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
-        animate={{ opacity: 1, rotate: 0, scale: 1 }}
-        transition={{ duration: 0.25 }}
-        className="text-sm leading-none"
-      >
-        {dark ? "🌙" : "☀️"}
-      </motion.span>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={dark ? "moon" : "sun"}
+          initial={{ opacity: 0, rotate: -90, scale: 0.5 }}
+          animate={{ opacity: 1, rotate: 0, scale: 1 }}
+          exit={{ opacity: 0, rotate: 90, scale: 0.5 }}
+          transition={{ duration: 0.2 }}
+          className="text-emerald text-base leading-none"
+        >
+          {dark ? "🌙" : "☀️"}
+        </motion.span>
+      </AnimatePresence>
     </button>
   );
 }
