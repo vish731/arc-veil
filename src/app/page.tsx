@@ -89,7 +89,7 @@ export default function Home() {
 
         <div className="hidden md:flex items-center gap-6 font-body text-sm">
           {navLinks.map((link) => (
-            <a
+            
               key={link.href}
               href={link.href}
               className="hover:text-emerald transition-colors"
@@ -141,7 +141,7 @@ export default function Home() {
           >
             <div className="px-8 py-4 flex flex-col gap-2">
               {navLinks.map((link) => (
-                <a
+                
                   key={link.href}
                   href={link.href}
                   className="rounded-2xl p-3 bg-surface border-2 border-ink/10 font-mono text-sm hover:border-emerald transition-colors"
@@ -313,7 +313,7 @@ export default function Home() {
             { href: "/auditor", title: "Auditor Access", desc: "Verify specific payroll amounts with a shared secret." },
             { href: "/employee", title: "Employee View", desc: "Employees see only their own on-chain records." },
           ].map((item) => (
-           <a 
+            
               key={item.href}
               href={item.href}
               className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)] hover:-translate-y-1 transition-transform block"
