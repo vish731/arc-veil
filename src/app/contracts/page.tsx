@@ -25,31 +25,34 @@ export default function Contracts() {
         </motion.div>
 
         <div className="flex flex-col gap-4">
-          {contracts.map((c, i) => (
-            <motion.div
-              key={c.address}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.08 }}
-              className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="font-display font-semibold">{c.name}</h3>
-                <span className="text-xs font-mono px-3 py-1 rounded-full border bg-emerald/10 text-emerald-dark border-emerald/30">
-                  verified
-                </span>
-              </div>
-              <p className="text-ink/60 text-sm mb-4">{c.desc}</p>
-              
-                href={"https://testnet.arcscan.app/address/" + c.address}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-xs text-emerald hover:underline break-all"
+          {contracts.map((c, i) => {
+            const explorerLink = "https://testnet.arcscan.app/address/" + c.address;
+            return (
+              <motion.div
+                key={c.address}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.08 }}
+                className="bg-surface border-2 border-ink rounded-3xl p-6 shadow-[4px_4px_0px_0px_rgba(15,27,43,1)]"
               >
-                {c.address}
-              </a>
-            </motion.div>
-          ))}
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="font-display font-semibold">{c.name}</h3>
+                  <span className="text-xs font-mono px-3 py-1 rounded-full border bg-emerald/10 text-emerald-dark border-emerald/30">
+                    verified
+                  </span>
+                </div>
+                <p className="text-ink/60 text-sm mb-4">{c.desc}</p>
+                
+                  href={explorerLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-mono text-xs text-emerald hover:underline break-all"
+                >
+                  {c.address}
+                </a>
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </Sidebar>
