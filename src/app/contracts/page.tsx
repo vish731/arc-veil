@@ -42,7 +42,7 @@ export default function Contracts() {
                   </span>
                 </div>
                 <p className="text-ink/60 text-sm mb-4">{c.desc}</p>
-                
+                <a
                   href={explorerLink}
                   target="_blank"
                   rel="noopener noreferrer"
