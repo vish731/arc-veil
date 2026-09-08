@@ -23,7 +23,7 @@ export default function Activity() {
     <Sidebar>
       <div className="max-w-3xl mx-auto px-6 md:px-10 py-10">
         <motion.div
-          initial={{ opacity: 0, y: 1 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
