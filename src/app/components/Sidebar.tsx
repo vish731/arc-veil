@@ -10,7 +10,6 @@ import ThemeToggle from "./ThemeToggle";
 import GlobalSearch from "./GlobalSearch";
 
 const links = [
-  { href: "/", label: "Home" },
   { href: "/onboarding", label: "Getting started" },
   { href: "/dashboard", label: "Payroll" },
   { href: "/vendors", label: "Vendors" },
@@ -51,6 +50,16 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       <div className="flex items-center justify-between px-6 md:px-8 py-5 border-b-2 border-ink/10">
         <div className="flex items-center gap-4">
           <Link href="/" className="font-display font-bold text-xl tracking-tight">
+            <Link
+  href="/"
+  className="w-8 h-8 flex items-center justify-center border-2 border-ink rounded-full hover:bg-ink hover:text-paper transition-colors shrink-0"
+  aria-label="Home"
+>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+    <path d="M9 22V12h6v10" />
+  </svg>
+</Link>
             arc<span className="text-emerald">-veil</span>
           </Link>
           <span className="hidden md:inline-flex items-center gap-1.5 font-mono text-xs text-ink/50">
