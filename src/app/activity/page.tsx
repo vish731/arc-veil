@@ -13,7 +13,7 @@ const activities = [
 
 const typeStyles: Record<string, string> = {
   payroll: "bg-emerald/10 text-emerald-dark border-emerald/30",
-  employee: "bg-gold/10 text-ink border-gold/40",
+ 
   vendor: "bg-ink/5 text-ink/70 border-ink/20",
   auditor: "bg-emerald/10 text-emerald-dark border-emerald/30",
 };
